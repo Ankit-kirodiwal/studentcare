@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1.0">
+ <title>StudentCare — Smart Student Analysis</title>
+ <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- AUTH -->
+<div class="auth-wrap" id="auth-wrap">
+ <div class="auth-card">
+ <div class="auth-logo">
+ <h1>StudentCare</h1>
+ <p>Smart Student Performance System</p>
+ </div>
+ <div class="auth-tabs">
+ <button class="auth-tab active" data-tab="login">Login</button>
+ <button class="auth-tab" data-tab="register">Register</button>
+ </div>
+
+ <!-- LOGIN -->
+ <div id="login-form-wrap">
+ <div class="auth-error" id="login-error"></div>
+ <form id="login-form">
+ <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" placeholder="teacher@college.edu" required></div>
+ <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-password" type="password" placeholder="........" required></div>
+ <button type="submit" class="btn-primary" id="login-btn">Login</button>
+ </form>
+ <p style="margin-top:14px;text-align:center;font-size:15px;color:var(--muted)">No account? <span style="color:var(--accent);cursor:pointer" onclick="switchAuthTab('register')">Register here</span></p>
+ </div>
+
+ <!-- REGISTER -->
+ <div id="register-form-wrap" style="display:none">
+ <div class="auth-error" id="reg-error"></div>
+ <div class="auth-success" id="reg-success"></div>
+ <form id="register-form">
+ <div class="form-row">
+ <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" id="reg-name" type="text" required></div>
+ <div class="form-group"><label class="form-label">Employee ID *</label><input class="form-input" id="reg-empid" type="text" required></div>
+ </div>
+ <div class="form-group"><label class="form-label">Email *</label><input class="form-input" id="reg-email" type="email" required></div>
+ <div class="form-row">
+ <div class="form-group"><label class="form-label">Department</label>
+ <select class="form-select" id="reg-dept">
+ <option>Computer Science & Engineering</option>
+ <option>Information Technology</option>
+ <option>Data Science</option>
+ <option>Artificial Intelligence</option>
+ </select>
+ </div>
+ <div class="form-group"><label class="form-label">Designation</label>
+ <select class="form-select" id="reg-desig">
+ <option>Assistant Professor</option>
+ <option>Associate Professor</option>
+ <option>Professor</option>
+ <option>Head of Department</option>
+ </select>
+ </div>
+ </div>
+ <div class="form-row">
+ <div class="form-group"><label class="form-label">Password *</label><input class="form-input" id="reg-password" type="password" placeholder="Min 6 chars" required></div>
+ <div class="form-group"><label class="form-label">Confirm *</label><input class="form-input" id="reg-confirm" type="password" placeholder="Repeat" required></div>
+ </div>
+ <button type="submit" class="btn-primary" id="reg-btn"> Create Account</button>
+ </form>
+ <p style="margin-top:12px;text-align:center;font-size:15px;color:var(--muted)">Have account? <span style="color:var(--accent);cursor:pointer" onclick="switchAuthTab('login')">Login</span></p>
+ </div>
+ </div>
+</div>
+
+<!-- APP -->
+<div class="layout" id="app-wrap" style="display:none">
+
+ <!-- SIDEBAR -->
+ <aside class="sidebar" id="sidebar">
+ <div class="sidebar-logo">
+ <div class="logo-mark">
+ <div><div class="logo-text">StudentCare</div></div>
+ </div>
+ </div>
+ <nav class="sidebar-nav">
+ <div class="nav-section">
+ <div class="nav-item active" data-page="dashboard"><span class="label">Dashboard</span></div>
+ <div class="nav-item" data-page="students"><span class="label">Students</span><span class="badge" id="badge-students">0</span></div>
+ <div class="nav-item" data-page="recommendations"><span class="label">AI Recommendations</span></div>
+ <div class="nav-item" data-page="analytics"><span class="label">Analytics</span></div>
+ </div>
+ <div class="nav-section">
+ <div class="nav-item" data-page="add-student"><span class="label">Add Student</span></div>
+ <div class="nav-item" data-page="teachers"><span class="label">All Teachers</span><span class="badge" id="badge-teachers">—</span></div>
+ </div>
+ </nav>
+ <div class="sidebar-footer">
+ <div class="teacher-card">
+ <div class="teacher-card-inner">
+ <div>
+ <div class="teacher-name" id="sidebar-teacher-name">Loading...</div>
+ <div class="teacher-role" id="sidebar-teacher-role">Teacher</div>
+ </div>
+ </div>
+ <button class="logout-btn" id="logout-btn">Logout</button>
+ </div>
+ </div>
+ </aside>
+
+ <main class="main">
+ <header class="topbar">
+ <div style="display:flex;align-items:center;gap:12px">
+ <button class="hamburger" id="hamburger"></button>
+ <div class="topbar-title" id="topbar-title">Dashboard</div>
+ </div>
+ <div class="topbar-right">
+ <button class="topbar-btn primary" onclick="goToAddStudent()"> Add Student</button>
+ </div>
+ </header>
+
+ <!-- DASHBOARD -->
+ <section class="page active" id="page-dashboard">
+ <div class="hero-banner">
+ <div class="hero-text">
+ <h2>Welcome to StudentCare </h2>
+ </div>
+ <div style="font-size:56px;opacity:.6"></div>
+ </div>
+ <div class="stats-grid">
+ <div class="stat-card total"><div class="stat-label">My Students</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">All branches</div></div>
+ <div class="stat-card high"><div class="stat-label">High Performers</div><div class="stat-value" id="stat-high">—</div><div class="stat-sub">Score ≥ 80%</div></div>
+ <div class="stat-card mid"><div class="stat-label">Medium Performers</div><div class="stat-value" id="stat-medium">—</div><div class="stat-sub">Score 65–79%</div></div>
+ <div class="stat-card avg"><div class="stat-label">Need Help</div><div class="stat-value" id="stat-average">—</div><div class="stat-sub">Score &lt; 65%</div></div>
+ <div class="stat-card total"><div class="stat-label">Class Average</div><div class="stat-value" id="stat-classavg">—</div><div class="stat-sub">Composite score</div></div>
+ </div>
+
+ <div style="display:grid;grid-template-columns:1fr 260px;gap:16px;margin-bottom:16px">
+ <div class="card">
+ <div class="card-header">
+ <div class="card-title">Top Performers</div>
+ <button class="topbar-btn" onclick="document.querySelector('[data-page=students]').click()">View All -></button>
+ </div>
+ <div class="table-wrap">
+ <table>
+ <thead><tr><th>#</th><th>Student</th><th>Roll</th><th>Branch</th><th>Sem</th><th>Score</th><th>Category</th><th></th></tr></thead>
+ <tbody id="dash-table-body"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:24px">Loading...</td></tr></tbody>
+ </table>
+ </div>
+ </div>
+ <div class="card">
+ <div class="card-title" style="margin-bottom:12px">Distribution</div>
+ <div style="display:flex;justify-content:center;margin-bottom:12px"><canvas id="donut-chart" width="180" height="180"></canvas></div>
+ <div style="display:flex;flex-direction:column;gap:6px">
+ <div style="display:flex;align-items:center;gap:7px;font-size:15px"><div style="width:8px;height:8px;background:var(--high);border-radius:2px"></div><span>High</span><span style="margin-left:auto;color:var(--muted)" id="legend-high">—</span></div>
+ <div style="display:flex;align-items:center;gap:7px;font-size:15px"><div style="width:8px;height:8px;background:var(--mid);border-radius:2px"></div><span>Medium</span><span style="margin-left:auto;color:var(--muted)" id="legend-mid">—</span></div>
+ <div style="display:flex;align-items:center;gap:7px;font-size:15px"><div style="width:8px;height:8px;background:var(--avg);border-radius:2px"></div><span>Average</span><span style="margin-left:auto;color:var(--muted)" id="legend-avg">—</span></div>
+ </div>
+ </div>
+ </div>
+
+ <!-- Branch breakdown -->
+ <div class="card">
+ <div class="card-title" style="margin-bottom:14px">Branch Breakdown</div>
+ <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px" id="branch-breakdown"></div>
+ </div>
+ </section>
+
+ <!-- STUDENTS -->
+ <section class="page" id="page-students">
+ <div class="section-header">
+ <div class="section-title">All Students</div>
+ <div class="section-sub">Filter by category, branch, or semester. Data from MySQL.</div>
+ </div>
+ <div class="card">
+ <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+ <div class="filter-tabs">
+ <button class="filter-tab active" data-filter="all">All</button>
+ <button class="filter-tab" data-filter="high">High</button>
+ <button class="filter-tab" data-filter="medium">Medium</button>
+ <button class="filter-tab" data-filter="average">Average</button>
+ </div>
+ <select class="mini-select" id="filter-branch">
+ <option value="">All Branches</option>
+ <option value="CS">CS</option>
+ <option value="IT">IT</option>
+ <option value="DS">DS</option>
+ <option value="AI">AI</option>
+ </select>
+ <select class="mini-select" id="filter-sem">
+ <option value="">All Semesters</option>
+ <option value="1">Sem 1</option><option value="2">Sem 2</option>
+ <option value="3">Sem 3</option><option value="4">Sem 4</option>
+ <option value="5">Sem 5</option><option value="6">Sem 6</option>
+ <option value="7">Sem 7</option><option value="8">Sem 8</option>
+ </select>
+ <div class="search-bar"><span></span><input type="text" placeholder="Name or Roll No..." id="student-search"></div>
+ </div>
+ <div id="students-list"></div>
+ </div>
+ </section>
+
+ <!-- RECOMMENDATIONS -->
+ <section class="page" id="page-recommendations">
+  <div class="section-header">
+    <div class="section-title">AI Recommendations</div>
+    <div class="section-sub">Personalised suggestions generated by AI. Filter by category, branch, or semester.</div>
+  </div>
+  <div class="card">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px">
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-rec-filter="all">All</button>
+        <button class="filter-tab" data-rec-filter="high">High</button>
+        <button class="filter-tab" data-rec-filter="medium">Medium</button>
+        <button class="filter-tab" data-rec-filter="average">Average</button>
+      </div>
+      <select class="mini-select" id="rec-filter-branch">
+        <option value="">All Branches</option>
+        <option value="CS">CS</option>
+        <option value="IT">IT</option>
+        <option value="DS">DS</option>
+        <option value="AI">AI</option>
+      </select>
+      <select class="mini-select" id="rec-filter-sem">
+        <option value="">All Semesters</option>
+        <option value="1">Sem 1</option>
+        <option value="2">Sem 2</option>
+        <option value="3">Sem 3</option>
+        <option value="4">Sem 4</option>
+        <option value="5">Sem 5</option>
+        <option value="6">Sem 6</option>
+        <option value="7">Sem 7</option>
+        <option value="8">Sem 8</option>
+      </select>
+      <div class="search-bar">
+        <input type="text" placeholder="Search name or roll..." id="rec-search">
+      </div>
+    </div>
+    <div id="rec-count" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
+    <div class="rec-cards" id="rec-cards"></div>
+  </div>
+ </section>
+
+ <!-- ANALYTICS -->
+ <section class="page" id="page-analytics">
+ <div class="section-header">
+ <div class="section-title"> Analytics</div>
+ <div class="section-sub">Visualisations from MySQL data.</div>
+ </div>
+ <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+ <div class="card"><div class="card-title" style="margin-bottom:16px"> Score Distribution</div><canvas id="bar-chart" width="480" height="230"></canvas></div>
+ <div class="card"><div class="card-title" style="margin-bottom:16px"> Domain Radar</div><canvas id="domain-chart" width="300" height="260"></canvas></div>
+ </div>
+ <div class="card"><div class="card-title" style="margin-bottom:16px"> Attendance Trend</div><canvas id="attendance-chart" style="width:100%" height="220"></canvas></div>
+ </section>
+
+ <!-- ADD STUDENT -->
+ <section class="page" id="page-add-student">
+ <div class="section-header">
+ <div class="section-title">Add New Student</div>
+ <div class="section-sub">Select branch and semester — subjects auto-load. AI analyses and saves to MySQL.</div>
+ </div>
+ <form id="add-student-form">
+
+ <!-- Basic Info -->
+ <div class="card">
+ <div class="card-title" style="margin-bottom:16px"> Basic Information</div>
+ <div class="form-row" style="grid-template-columns:1fr 1fr 1fr 1fr;gap:12px">
+ <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" id="f-name" type="text" required></div>
+ <div class="form-group"><label class="form-label">Roll Number *</label><input class="form-input" id="f-roll" type="text" required></div>
+ <div class="form-group"><label class="form-label">Attendance %</label><input class="form-input" id="f-att" type="number" min="0" max="100"  required></div>
+ <div class="form-group"><label class="form-label">Behavior</label>
+ <select class="form-select" id="f-behavior">
+ <option>Excellent</option><option selected>Good</option>
+ <option>Average</option><option>Needs Improvement</option>
+ </select>
+ </div>
+ </div>
+ <div class="form-row" style="grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:4px">
+ <!-- BRANCH SELECTOR -->
+ <div class="form-group">
+ <label class="form-label">Branch *</label>
+ <select class="form-select" id="f-branch">
+ <option value="CS">CS — Computer Science</option>
+ <option value="IT">IT — Information Technology</option>
+ <option value="DS">DS — Data Science</option>
+ <option value="AI">AI — Artificial Intelligence</option>
+ </select>
+ </div>
+ <!-- SECTION SELECTOR -->
+ <div class="form-group">
+ <label class="form-label">Section</label>
+ <select class="form-select" id="f-section">
+ <option value="A">Section A</option>
+ <option value="B">Section B</option>
+ </select>
+ </div>
+ <!-- SEMESTER SELECTOR -->
+ <div class="form-group">
+ <label class="form-label">Semester *</label>
+ <select class="form-select" id="f-semester">
+ <option value="1">Semester 1</option>
+ <option value="2">Semester 2</option>
+ <option value="3">Semester 3</option>
+ <option value="4">Semester 4</option>
+ <option value="5">Semester 5</option>
+ <option value="6">Semester 6</option>
+ <option value="7">Semester 7</option>
+ <option value="8">Semester 8</option>
+ </select>
+ </div>
+ </div>
+ <div class="alert info" style="margin-top:12px;margin-bottom:0">
+ <span></span>
+ <div>Changing <strong>Branch</strong> or <strong>Semester</strong> automatically loads the correct subjects below.</div>
+ </div>
+ </div>
+
+ <!-- Dynamic Subject Marks -->
+ <div class="card">
+ <div class="card-title" style="margin-bottom:4px"> Subject Marks (out of 100)</div>
+ <div style="font-size:15px;color:var(--muted);margin-bottom:14px" id="subjects-heading">CS · Semester 6 — 6 subjects</div>
+ <div class="subjects-grid" id="subjects-wrap">
+  
+
+ <!-- Dynamically generated by app.js -->
+ </div>
+ </div>
+
+ <!-- Domain & Co-curricular -->
+ <div class="card">
+ <div class="card-title" style="margin-bottom:16px"> Domain Expertise & Co-curricular (out of 100)</div>
+ <div class="form-row" style="grid-template-columns:1fr 1fr 1fr 1fr;gap:12px">
+ <div class="form-group"><label class="form-label"> Sports</label><input class="form-input" id="f-sports" type="number" min="0" max="100"  required></div>
+ <div class="form-group"><label class="form-label"> Technical</label><input class="form-input" id="f-tech" type="number" min="0" max="100"  required></div>
+ <div class="form-group"><label class="form-label"> Non-Technical</label><input class="form-input" id="f-nontech" type="number" min="0" max="100"  required></div>
+ <div class="form-group"><label class="form-label"> Extracurricular</label><input class="form-input" id="f-extra" type="number" min="0" max="100"  required></div>
+ </div>
+ <div class="form-row" style="grid-template-columns:1fr 1fr;gap:12px;margin-top:4px">
+ <div class="form-group"><label class="form-label">Assignments %</label><input class="form-input" id="f-assign" type="number" min="0" max="100"  required></div>
+ <div class="form-group"><label class="form-label">Projects %</label><input class="form-input" id="f-proj" type="number" min="0" max="100"  required></div>
+ </div>
+ </div>
+
+ <div style="display:flex;gap:10px;justify-content:flex-end">
+ <button type="reset" class="topbar-btn"> Reset</button>
+ <button type="submit" class="topbar-btn primary"> Analyse & Save to MySQL</button>
+ </div>
+ </form>
+ </section>
+
+ <!-- TEACHERS -->
+ <section class="page" id="page-teachers">
+ <div class="section-header">
+ <div class="section-title"> All Registered Teachers</div>
+ </div>
+ <div class="card">
+ <div class="table-wrap">
+ <table>
+ <thead><tr><th>#</th><th>Teacher</th><th>Emp ID</th><th>Department</th><th>Designation</th><th>Students</th><th>Joined</th></tr></thead>
+ <tbody id="teachers-table-body"><tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px">Loading...</td></tr></tbody>
+ </table>
+ </div>
+ </div>
+  </section>
+
+ </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+ <div class="modal">
+ <div class="modal-header">
+ <div><h3 style="font-size:18px">Student Profile</h3><div style="font-size:15px;color:var(--muted)">MySQL · AI-analysed</div></div>
+ <button class="modal-close" id="modal-close">x</button>
+ </div>
+ <div id="modal-body"></div>
+ </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading-overlay">
+ <div class="loading-box">
+ <div class="spinner big-spinner"></div>
+ <p id="loading-text">Loading...</p>
+ </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+<script>
+ // Navigate to Add Student page
+ function goToAddStudent() {
+ document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+ document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+ document.querySelector('[data-page="add-student"]')?.classList.add('active');
+ document.getElementById('page-add-student')?.classList.add('active');
+ setText('topbar-title', 'Add Student');
+ refreshSubjects();
+ }
+</script>
+</body>
+</html>

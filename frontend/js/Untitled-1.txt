@@ -1,0 +1,35 @@
+D:.
+│   database.sql
+│   package.json
+│   README.md
+│
+├───backend
+│   │   .env
+│   │   .env.example
+│   │   package-lock.json
+│   │   package.json
+│   │   server.js
+│   │
+│   ├───config
+│   │       aiEngine.js
+│   │       db.js
+│   │
+│   ├───middleware
+│   │       auth.js
+│   │
+│   ├───node_modules
+
+│   │
+│   └───routes
+│           auth.js
+│           students.js
+│
+└───frontend
+    │   index.html
+    │
+    ├───css
+    │       style.css
+    │
+    └───js
+            api.js
+            app.js

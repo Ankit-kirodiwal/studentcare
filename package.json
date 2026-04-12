@@ -1,0 +1,11 @@
+{
+  "name": "studentcare-fullstack",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Deployable StudentCare full-stack app",
+  "scripts": {
+    "postinstall": "npm install --prefix backend",
+    "start": "node backend/server.js",
+    "dev": "npm run dev --prefix backend"
+  }
+}
