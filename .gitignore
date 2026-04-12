@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+backend/node_modules/
+backend/.env
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+
+# Optional
+dist/
+build/
